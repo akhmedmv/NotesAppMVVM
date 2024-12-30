@@ -1,46 +1,33 @@
 package com.akhmedmv.notesappmvvm
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.akhmedmv.notesappmvvm.model.Note
+import com.akhmedmv.notesappmvvm.database.room.AppRoomDateBase
+import com.akhmedmv.notesappmvvm.database.room.repository.RoomRepository
+import com.akhmedmv.notesappmvvm.utils.REPOSITORY
 import com.akhmedmv.notesappmvvm.utils.TYPE_FIREBASE
 import com.akhmedmv.notesappmvvm.utils.TYPE_ROOM
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    val readTest: MutableLiveData<List<Note>> by lazy {
-        MutableLiveData<List<Note>>()
-    }
+    val context = application
 
-    val dbType: MutableLiveData<String> by lazy {
-        MutableLiveData<String>(TYPE_ROOM)
-    }
+    fun initDataBase(type: String, onSuccess: () -> Unit) {
+        Log.d("checkData", "MainViewModel init DataBase with type: $type")
+        when (type) {
+            TYPE_ROOM -> {
+                val dao = AppRoomDateBase.getInstance(context = context).getRoomDao()
+                REPOSITORY = RoomRepository(dao)
+                onSuccess()
+            }
 
-    init {
-        readTest.value =
-            when (dbType.value) {
-                TYPE_ROOM -> {
-                    listOf<Note>(
-                        Note(title = "Note 1", subtitle = "Subtitle 1"),
-                        Note(title = "Note 1", subtitle = "Subtitle 1"),
-                        Note(title = "Note 1", subtitle = "Subtitle 1"),
-                        Note(title = "Note 1", subtitle = "Subtitle 1"),
-                    )
-                }
+            TYPE_FIREBASE -> {
 
-                TYPE_FIREBASE -> {
-                    listOf(Note(title = "Note 1", subtitle = "Subtitle 1"))
-                }
-
-                else -> {}
-            } as List<Note>?
-    }
-
-    fun initDataBase(type: String) {
-        dbType.value = type
+            }
+        }
     }
 }
 
