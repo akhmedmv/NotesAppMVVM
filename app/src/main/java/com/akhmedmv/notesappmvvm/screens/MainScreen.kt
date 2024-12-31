@@ -38,11 +38,8 @@ import com.akhmedmv.notesappmvvm.navigation.NavRoute
 import com.akhmedmv.notesappmvvm.ui.theme.NotesAppMVVMTheme
 
 @Composable
-fun MainScreen(navController: NavHostController) {
-    val context = LocalContext.current
-    val mViewModel: MainViewModel =
-        viewModel(factory = MainViewModelFactory(context.applicationContext as Application))
-    val notes = mViewModel.readTest.observeAsState(listOf())
+fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
+    val notes = viewModel.readAllNotes().observeAsState(listOf()).value
     Scaffold(floatingActionButton = {
         FloatingActionButton(onClick = { navController.navigate(NavRoute.Add.route) }) {
             Icon(
@@ -53,7 +50,7 @@ fun MainScreen(navController: NavHostController) {
         }
     }) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            if (notes.value.isEmpty()) {
+            if (notes.isEmpty()) {
                 Text(
                     text = "Нет заметок",
                     modifier = Modifier.fillMaxSize(),
@@ -62,7 +59,7 @@ fun MainScreen(navController: NavHostController) {
                 )
             } else {
                 LazyColumn {
-                    items(notes.value) { note ->
+                    items(notes) { note ->
                         NoteItem(note, navController)
                     }
                 }
@@ -110,6 +107,9 @@ fun NoteItem(
 @Composable
 fun PreviewMainScreen() {
     NotesAppMVVMTheme {
-        MainScreen(navController = rememberNavController())
+        val context = LocalContext.current
+        val mViewModel: MainViewModel =
+            viewModel(factory = MainViewModelFactory(context.applicationContext as Application))
+        MainScreen(navController = rememberNavController(), mViewModel)
     }
 }

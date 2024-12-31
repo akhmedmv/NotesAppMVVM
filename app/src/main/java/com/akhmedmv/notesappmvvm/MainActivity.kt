@@ -1,5 +1,6 @@
 package com.akhmedmv.notesappmvvm
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +15,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.akhmedmv.notesappmvvm.navigation.NotesNavHost
 import com.akhmedmv.notesappmvvm.ui.theme.NotesAppMVVMTheme
 
@@ -24,6 +27,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NotesAppMVVMTheme {
+                val context = LocalContext.current
+                val mViewModel: MainViewModel =
+                    viewModel(factory = MainViewModelFactory(context.applicationContext as Application))
                 Scaffold(
                     topBar = {
                         TopAppBar(
@@ -44,11 +50,11 @@ class MainActivity : ComponentActivity() {
                                 .padding(innerPadding),
                             color = MaterialTheme.colorScheme.background
                         ) {
-                            NotesNavHost()
+                            NotesNavHost(mViewModel)
                         }
                     }
                 )
-                NotesNavHost()
+                NotesNavHost(mViewModel)
             }
         }
     }
