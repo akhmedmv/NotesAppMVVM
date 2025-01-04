@@ -36,7 +36,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun addNote(note: Note, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            REPOSITORY.create(note = note) {
+            //Если при добавлении новой заметки не передается явное id
+            val newNote =
+                note.copy(id = 0)  // устанавливаем id равным 0, чтобы автоинкремент сработал
+            REPOSITORY.create(note = newNote) {
+                viewModelScope.launch(Dispatchers.Main) {
+                    onSuccess()
+                }
+            }
+        }
+    }
+
+    fun updateNote(note: Note, onSuccess: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            REPOSITORY.update(note = note) {
+                viewModelScope.launch(Dispatchers.Main) {
+                    onSuccess()
+                }
+            }
+        }
+    }
+
+    fun deleteNote(note: Note, onSuccess: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            REPOSITORY.delete(note = note) {
                 viewModelScope.launch(Dispatchers.Main) {
                     onSuccess()
                 }

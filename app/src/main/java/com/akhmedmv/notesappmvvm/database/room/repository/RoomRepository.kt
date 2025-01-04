@@ -1,5 +1,6 @@
 package com.akhmedmv.notesappmvvm.database.room.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.akhmedmv.notesappmvvm.database.DataBaseRepository
 import com.akhmedmv.notesappmvvm.database.room.dao.NoteRoomDao
@@ -13,23 +14,35 @@ class RoomRepository(private val noteRoomDao: NoteRoomDao) : DataBaseRepository 
         note: Note,
         onSuccess: () -> Unit
     ) {
-        noteRoomDao.addNote(note)
-        onSuccess()
+        try {
+            noteRoomDao.addNote(note)
+            onSuccess()
+        } catch (e: Exception) {
+            Log.e("RoomRepository", "Error inserting note", e)
+        }
     }
 
     override suspend fun update(
         note: Note,
         onSuccess: () -> Unit
     ) {
-        noteRoomDao.updateNote(note)
-        onSuccess()
+        try {
+            noteRoomDao.updateNote(note)
+            onSuccess()
+        } catch (e: Exception) {
+            Log.e("RoomRepository", "Error updating note", e)
+        }
     }
 
     override suspend fun delete(
         note: Note,
         onSuccess: () -> Unit
     ) {
-        noteRoomDao.deleteNote(note)
-        onSuccess()
+        try {
+            noteRoomDao.deleteNote(note)
+            onSuccess()
+        } catch (e: Exception) {
+            Log.d("RoomRepository", "Error deleting note", e)
+        }
     }
 }
