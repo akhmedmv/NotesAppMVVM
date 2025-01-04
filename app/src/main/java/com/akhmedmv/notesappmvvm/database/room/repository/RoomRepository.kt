@@ -45,4 +45,6 @@ class RoomRepository(private val noteRoomDao: NoteRoomDao) : DataBaseRepository 
             Log.d("RoomRepository", "Error deleting note", e)
         }
     }
+
+    override fun signOut() {}
 }
