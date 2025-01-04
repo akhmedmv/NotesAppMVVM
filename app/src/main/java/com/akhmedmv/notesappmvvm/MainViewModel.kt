@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.akhmedmv.notesappmvvm.database.firebase.AppFirebaseRepository
 import com.akhmedmv.notesappmvvm.database.room.AppRoomDateBase
 import com.akhmedmv.notesappmvvm.database.room.repository.RoomRepository
 import com.akhmedmv.notesappmvvm.model.Note
@@ -29,7 +30,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
 
             TYPE_FIREBASE -> {
-
+                REPOSITORY = AppFirebaseRepository()
+                REPOSITORY.connectToDataBase(
+                    { onSuccess() },
+                    { Log.d("checkData", "Error: ${it}") }
+                )
             }
         }
     }
