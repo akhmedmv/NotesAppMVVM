@@ -42,6 +42,9 @@ import com.akhmedmv.notesappmvvm.model.Note
 import com.akhmedmv.notesappmvvm.navigation.NavRoute
 import com.akhmedmv.notesappmvvm.ui.theme.NotesAppMVVMTheme
 import com.akhmedmv.notesappmvvm.utils.Constants
+import com.akhmedmv.notesappmvvm.utils.DB_TYPE
+import com.akhmedmv.notesappmvvm.utils.TYPE_FIREBASE
+import com.akhmedmv.notesappmvvm.utils.TYPE_ROOM
 import kotlinx.coroutines.launch
 
 /*@Preview
@@ -133,10 +136,17 @@ fun ModalBottomSheetSample() {
 @Composable
 fun NoteScreen(navController: NavHostController, viewModel: MainViewModel, noteId: String?) {
     val notes = viewModel.readAllNotes().observeAsState(listOf()).value
-    val note = notes.firstOrNull { it.id == noteId?.toInt() } ?: Note(
-        title = Constants.Keys.NONE,
-        subtitle = Constants.Keys.NONE
-    )
+    val note = when (DB_TYPE) {
+        TYPE_ROOM -> {
+            notes.firstOrNull { it.id == noteId?.toInt() } ?: Note()
+        }
+
+        TYPE_FIREBASE -> {
+            notes.firstOrNull { it.firebaseId == noteId } ?: Note()
+        }
+
+        else -> Note()
+    }
 
     var isSheetOpen by rememberSaveable { mutableStateOf(false) }
 
@@ -167,7 +177,12 @@ fun NoteScreen(navController: NavHostController, viewModel: MainViewModel, noteI
     // Редактирование заметки
     val updateNote = {
         viewModel.updateNote(
-            note = Note(id = note.id, title = title, subtitle = subtitle)
+            note = Note(
+                id = note.id,
+                title = title,
+                subtitle = subtitle,
+                firebaseId = note.firebaseId
+            )
         ) {
             navController.navigate(NavRoute.Main.route)
         }

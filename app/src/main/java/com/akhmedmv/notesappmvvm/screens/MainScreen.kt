@@ -36,6 +36,10 @@ import com.akhmedmv.notesappmvvm.MainViewModelFactory
 import com.akhmedmv.notesappmvvm.model.Note
 import com.akhmedmv.notesappmvvm.navigation.NavRoute
 import com.akhmedmv.notesappmvvm.ui.theme.NotesAppMVVMTheme
+import com.akhmedmv.notesappmvvm.utils.Constants
+import com.akhmedmv.notesappmvvm.utils.DB_TYPE
+import com.akhmedmv.notesappmvvm.utils.TYPE_FIREBASE
+import com.akhmedmv.notesappmvvm.utils.TYPE_ROOM
 
 @Composable
 fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
@@ -53,7 +57,9 @@ fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
             if (notes.isEmpty()) {
                 Text(
                     text = "Нет заметок",
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.Center),
                     color = Color.Gray,
                     fontSize = 18.sp
                 )
@@ -69,16 +75,18 @@ fun MainScreen(navController: NavHostController, viewModel: MainViewModel) {
 }
 
 @Composable
-fun NoteItem(
-    note: Note,
-    navController: NavHostController,
-) {
+fun NoteItem(note: Note, navController: NavHostController) {
+    val noteId = when (DB_TYPE) {
+        TYPE_FIREBASE -> note.firebaseId
+        TYPE_ROOM -> note.id
+        else -> Constants.Keys.EMPTY
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 16.dp)
             .clickable {
-                navController.navigate(NavRoute.Note.route + "/${note.id}")
+                navController.navigate(NavRoute.Note.route + "/${noteId}")
             },
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -87,7 +95,7 @@ fun NoteItem(
     {
         Column(
             modifier = Modifier
-                .wrapContentSize()
+                .fillMaxSize()
                 .padding(vertical = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center

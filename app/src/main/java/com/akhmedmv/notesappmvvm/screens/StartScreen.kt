@@ -3,7 +3,6 @@
 package com.akhmedmv.notesappmvvm.screens
 
 import android.app.Application
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +43,7 @@ import com.akhmedmv.notesappmvvm.utils.Constants
 import com.akhmedmv.notesappmvvm.utils.Constants.Keys.FIREBASE_DATABASE
 import com.akhmedmv.notesappmvvm.utils.Constants.Keys.ROOM_DATABASE
 import com.akhmedmv.notesappmvvm.utils.Constants.Keys.WHAT_WILL_WE_USE
+import com.akhmedmv.notesappmvvm.utils.DB_TYPE
 import com.akhmedmv.notesappmvvm.utils.LOGIN
 import com.akhmedmv.notesappmvvm.utils.PASSWORD
 import com.akhmedmv.notesappmvvm.utils.TYPE_FIREBASE
@@ -103,7 +103,8 @@ fun StartScreen(navController: NavHostController, viewModel: MainViewModel) {
                         LOGIN = login
                         PASSWORD = password
                         viewModel.initDataBase(TYPE_FIREBASE) {
-                            Log.d("checkData", "Auth success")
+                            DB_TYPE = TYPE_FIREBASE
+                            navController.navigate(NavRoute.Main.route)
                         }
                     },
                     enabled = login.isNotEmpty() && password.isNotEmpty(),
@@ -130,6 +131,7 @@ fun StartScreen(navController: NavHostController, viewModel: MainViewModel) {
             Button(
                 onClick = {
                     viewModel.initDataBase(TYPE_ROOM) {
+                        DB_TYPE = TYPE_ROOM
                         navController.navigate(route = NavRoute.Main.route)
                     }
                 },
